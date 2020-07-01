@@ -1,4 +1,3 @@
-from numpy import sum as arraySum
 from numpy import divide as Numpy_Divide
 from numpy import multiply as Numpy_Multiply
 
@@ -9,7 +8,7 @@ class LeakyReluActivation(ActivationFunction):
     ''' Leaky ReLU Activation-Function Method Class. '''
 
     def getResultant(self, input_array, ratio=0.075):
-        ''' Get Results of ReLU Activation Function '''
+        ''' Get Results of Leaky ReLU Activation Function '''
         val = input_array
         self.negative_ratio = abs(ratio)
         return Numpy_Divide(abs(val) + val, 2) + Numpy_Multiply(Numpy_Divide(val - abs(val), 2), ratio)
