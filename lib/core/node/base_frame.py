@@ -11,11 +11,12 @@ class BaseFrame():
         inputs = zeros((1))
         outputs = zeros((1))
         self.layers = OrderedDict()
-        self.layers['input'] = inputs
-        self.layers['output'] = outputs
+        self.layers['INPUT'] = inputs
+        self.layers['OUTPUT'] = outputs
         self.layer_types = OrderedDict()
-        self.layer_types['input'] = 'INPUT'
-        self.layer_types['output'] = 'SIMPLE_SUM'
+        self.layer_types['INPUT'] = 'INPUT'
+        self.layer_types['OUTPUT'] = 'SIMPLE_SUM'
+        self.current_layer = 'INPUT'
         self.layer_count = 0
         self.frame = []
         self.frame.append(inputs.size)
@@ -47,24 +48,19 @@ class BaseFrame():
         raise ValueError('node_type must be string of valid node type.\
             \n    Ex.)\n        %s'%valid_node_types)
 
-    def addHiddenLayer(self, rows, position=-1, node_type='SIGMOID', dtype='float64'):
+    def addHiddenLayer(self, rows, node_type='SIGMOID', dtype='float64'):
         ''' Add Hidden Layer to frame. '''
         try:
             rows = int(rows)
-            position = int(position)
         except ValueError:
-            raise ValueError('addHiddenLayer Method requires integer inputs.')
+            raise ValueError('addHiddenLayer Method requires integer row.')
         node_type = node_type.upper()
         self.nodeTypeCheck(node_type)
         nodes = zeros((rows), dtype=dtype)
         self.layers[str(self.layer_count)] = nodes
         self.layer_types[str(self.layer_count)] = node_type
         self.layer_count += 1
-        if position == 0:
-            position = 1
-        elif position == len(self.frame):
-            position = -1
-        self.frame.insert(position, nodes.size)
+        self.frame.insert(-1, nodes.size)
 
     def resetLayer(self, rows, layer_title, node_type='SIGMOID', dtype='float64'):
         ''' Base Layer Reset. '''
@@ -104,3 +100,71 @@ class BaseFrame():
             nodes[row] = self.layers[str(layer_title)][row]
         self.layers[str(layer_title)] = nodes
         self.frame[layer_title] = nodes.size
+
+    def getLayerTitle(self, layer_title):
+        ''' Repeating method to retrieve layer index & title. '''
+        if layer_title is None:
+            layer_title = self.current_layer
+        layer_title = str(layer_title)
+        layer_title = layer_title.upper()
+        max_index = len(self.frame) - 1
+
+        if layer_title == 'INPUT' or layer_title == '0':
+            self.current_layer = 'INPUT'
+        elif layer_title == 'OUTPUT' or layer_title == str(max_index):
+            self.current_layer = 'OUTPUT'
+        else:
+            self.current_layer = layer_title
+        return layer_title
+
+    def changeLayerNodeType(self, layer_title, node_type):
+        ''' Changes Layer's Node Type. '''
+        node_type = node_type.upper()
+        layer_title = self.getLayerTitle(layer_title)
+        self.nodeTypeCheck(node_type)
+        self.layer_types[layer_title] = node_type
+
+    def selectLayer(self, layer_title=None):
+        '''
+        Select Current Layer for analysis.
+        Returns layer_index, input_nodes, current_layer_nodes, layer_type
+        '''
+        if layer_title is None:
+            layer_title = self.current_layer
+        layer_title = str(layer_title)
+        layer_title = layer_title.upper()
+        max_index = len(self.frame) - 1
+
+        if layer_title == 'INPUT' or layer_title == '0':
+            layer_index = 0
+            self.current_layer = 'INPUT'
+            input_nodes = zeros(0)
+        elif layer_title == 'OUTPUT' or layer_title == str(max_index):
+            layer_index = max_index
+            self.current_layer = 'OUTPUT'
+        else:
+            layer_index = int(layer_title)
+            self.current_layer = layer_title
+
+        if layer_index == 1:
+            input_nodes = self.layers['INPUT']
+        elif layer_index > 1:
+            input_nodes = self.layers[str(layer_index-1)]
+        current_layer_nodes = self.layers[layer_title]
+        layer_type = self.layer_types[layer_title]
+
+        return layer_index, input_nodes, current_layer_nodes, layer_type
+
+    def setLayerNodeValues(self, input_nodes, layer_title=None):
+        '''
+        Change Node Values of given Layer to some numpy array.
+        The second input, layer_title, may take layer_index as well.
+        '''
+        # TODO: Considering MultiThreading Method
+        layer_title = self.getLayerTitle(layer_title)
+        self.layers[layer_title] = input_nodes
+
+    def setNodeValue(self, node_value, node_index, layer_title=None):
+        ''' Change Value of Node in given Layer. '''
+        layer_title = self.getLayerTitle(layer_title)
+        self.layers[layer_title][node_index] = node_value
