@@ -6,11 +6,10 @@ class ActivationFunction():
 
     __class_name__ = 'ActivationFunction'
 
-    def __init__(self, reference_caller, input_array):
+    def __init__(self, input_array, reference_caller=None):
         self.caller = reference_caller
 
-        self.input_sum = arraySum(input_array)
-        self.resultant = self.getResultant(self.input_sum)
+        self.resultant = self.getResultant(input_array)
 
     def getResultant(self, inputArray=None):
         ''' Subclass Specific returning activation function results '''

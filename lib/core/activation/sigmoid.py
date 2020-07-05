@@ -1,4 +1,4 @@
-from math import exp
+from numpy import exp
 from numpy import divide as Numpy_Divide
 from numpy import multiply as Numpy_Multiply
 
@@ -12,7 +12,7 @@ class SigmoidActivation(ActivationFunction):
     def getResultant(input_array):
         ''' Get Results of Sigmoid Activation Function '''
         val = input_array
-        return Numpy_Divide(1,(1+ exp(-val)))
+        return Numpy_Divide(1, (1+exp(-val)))
 
     def getDerivative(self):
         resultant = self.resultant

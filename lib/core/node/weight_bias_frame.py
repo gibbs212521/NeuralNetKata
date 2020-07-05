@@ -7,6 +7,7 @@ class WeightBiasFrame():
 
     def __init__(self, base_frame):
         self.base_frame = base_frame
+        self.frames = base_frame.frame
         self.layers = []
         self.layer_ranges = []  #### Later Feature to be implemented
         self.resetWeightBiasFrame()
@@ -31,12 +32,28 @@ class WeightBiasFrame():
 
     def resetWeightBiasFrame(self):
         self.layers.clear()
-        for indx, layer in enumerate(self.base_frame):
+        final_index = len(self.frames) - 1
+        for indx, frames in enumerate(self.frames):
             # TODO: Break into threaded operation
             layer_index = indx + 1
-            if (layer_index) < len(self.base_frame):
-                self.generateBiasWeightArray(layer, self.base_frame[layer_index])
+            prev_layer = frames
+            if layer_index <= final_index:
+                self.generateBiasWeightArray(prev_layer, self.frames[indx+1])
 
     def getLayerWeightsAndBiases(self, layer_index=None):
         ''' Returns Weights and Biases Array for given layer_index. '''
-        return self.layers[layer_index]
+        return self.layers[layer_index-1]
+
+    def setLayerWeightsAndBiasesValues(self, input_nodes, layer_index):
+        '''
+        Change Node Values of given Layer to some numpy array.
+        The second input, layer_title, may take layer_index as well.
+        '''
+        # TODO: Considering MultiThreading Method
+        layer_title = self.getLayerTitle(layer_title)
+        self.layers[layer_title] = input_nodes
+
+    def setWeightAndBiasValue(self, node_value, node_index, layer_index):
+        ''' Change Value of Node in given Layer. '''
+        layer_title = self.getLayerTitle(layer_title)
+        self.layers[layer_title][node_index] = node_value

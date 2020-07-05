@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from numpy import zeros
+from numpy.random import random as npRandom
 
 class BaseFrame():
 
@@ -23,8 +24,12 @@ class BaseFrame():
         self.frame.append(outputs.size)
 
         self.node_dictionary = OrderedDict()
-        for indx, node_type in self.valid_node_types:
+        for indx, node_type in enumerate(self.valid_node_types):
             self.node_dictionary[str(indx + 1)] = node_type
+
+    @staticmethod
+    def random(shape=(1), scalar=1):#, dtype='64float'):
+        return (npRandom(shape) - 0.5) * scalar
 
     def addValidNodeType(self, node_type):
         ''' Adds valid node type to data class. '''
@@ -48,7 +53,7 @@ class BaseFrame():
         raise ValueError('node_type must be string of valid node type.\
             \n    Ex.)\n        %s'%valid_node_types)
 
-    def addHiddenLayer(self, rows, node_type='SIGMOID', dtype='float64'):
+    def addHiddenLayer(self, rows, node_type='SIGMOID'):#, dtype='float64'):
         ''' Add Hidden Layer to frame. '''
         try:
             rows = int(rows)
@@ -56,13 +61,13 @@ class BaseFrame():
             raise ValueError('addHiddenLayer Method requires integer row.')
         node_type = node_type.upper()
         self.nodeTypeCheck(node_type)
-        nodes = zeros((rows), dtype=dtype)
+        nodes = self.random(rows)#, dtype=dtype)
+        self.layer_count += 1
         self.layers[str(self.layer_count)] = nodes
         self.layer_types[str(self.layer_count)] = node_type
-        self.layer_count += 1
         self.frame.insert(-1, nodes.size)
 
-    def resetLayer(self, rows, layer_title, node_type='SIGMOID', dtype='float64'):
+    def resetLayer(self, rows, layer_title, node_type='SIGMOID'):#, dtype='float64'):
         ''' Base Layer Reset. '''
         node_type = node_type.upper()
         if node_type is not self.layer_types['%s'%layer_title]:
@@ -72,20 +77,20 @@ class BaseFrame():
             if not isinstance(rows, int):
                 raise TypeError('%sResetLayer rows must both be left undefined\
                     \n or both be defined as an integer.'%layer_title)
-            nodes = zeros((rows), dtype=dtype)
+            nodes = self.random(rows)#, dtype=dtype)
             self.layers['%s'%layer_title] = nodes
             return
         rows = self.layers['%s'%layer_title].size
-        nodes = zeros((rows), dtype=dtype)
+        nodes = self.random((rows), dtype=dtype)
         self.layers['%s'%layer_title] = nodes
 
     def inputResetLayer(self, rows):
         ''' Resets Input Layer; may be used to redimension inputs. '''
-        self.resetLayer(rows, layer_title='input', node_type='INPUT')
+        self.resetLayer(rows, layer_title='INPUT', node_type='INPUT')
 
     def outputResetLayer(self, rows, node_type='SIMPLE_SUM'):
         ''' Resets Output Layer; may be used to redimension inputs. '''
-        self.resetLayer(rows, layer_title='output', node_type=node_type)
+        self.resetLayer(rows, layer_title='OUTPUT', node_type=node_type)
 
     def addNodeToLayer(self, layer_title, number_of_new_nodes):
         ''' Add Node Type to Hidden Layer. '''
@@ -95,7 +100,7 @@ class BaseFrame():
         except ValueError:
             raise ValueError('addNodeToLayer Method requires integer layer_title and integer number_of_new_nodes.')
         rows = self.layers['%s'%layer_title].size
-        nodes = zeros((rows + number_of_new_nodes))
+        nodes = self.random((rows + number_of_new_nodes))
         for row in range(rows):
             nodes[row] = self.layers[str(layer_title)][row]
         self.layers[str(layer_title)] = nodes
@@ -114,7 +119,8 @@ class BaseFrame():
         elif layer_title == 'OUTPUT' or layer_title == str(max_index):
             self.current_layer = 'OUTPUT'
         else:
-            self.current_layer = layer_title
+            self.current_layer = str(layer_title)
+        layer_title = self.current_layer
         return layer_title
 
     def changeLayerNodeType(self, layer_title, node_type):
@@ -141,7 +147,8 @@ class BaseFrame():
             input_nodes = zeros(0)
         elif layer_title == 'OUTPUT' or layer_title == str(max_index):
             layer_index = max_index
-            self.current_layer = 'OUTPUT'
+            layer_title = 'OUTPUT'
+            self.current_layer = layer_title
         else:
             layer_index = int(layer_title)
             self.current_layer = layer_title

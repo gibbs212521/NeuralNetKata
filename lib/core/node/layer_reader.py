@@ -5,6 +5,7 @@ from lib.core.activation.sigmoid import SigmoidActivation
 from lib.core.activation.tanh import TanhActivation
 from lib.core.activation.relu import ReluActivation
 from lib.core.activation.leaky_relu import LeakyReluActivation
+from lib.core.activation.node_sum import SumActivation
 
 class LayerReader():
 
@@ -17,7 +18,7 @@ class LayerReader():
         'RELU', 'LEAKY_RELU']
     node_dictionary = {}
     node_dictionary['INPUT'] = deepcopy
-    node_dictionary['SIMPLE_SUM'] = npSum
+    node_dictionary['SIMPLE_SUM'] = SumActivation
     node_dictionary['SIGMOID'] = SigmoidActivation
     node_dictionary['TANH'] = TanhActivation
     node_dictionary['RELU'] = ReluActivation
@@ -37,12 +38,15 @@ class LayerReader():
     def calculateLayerForwardPropagation(self, base_frame, weight_bias_frame, layer_title):
         ''' Returns new node values for given node layer. '''
         # TODO: MultiThread Following Section:
+        layer_title = base_frame.getLayerTitle(layer_title)
         layer_index, input_nodes, current_nodes, layer_type = base_frame.selectLayer(layer_title)
         self.resetNodeClass(layer_type)
         weight_biases = weight_bias_frame.getLayerWeightsAndBiases(layer_index)
+        if layer_type == 'INPUT':
+            return layer_index, current_nodes
         node_input_sums = deepcopy(weight_biases)
         node_input_sums[:, :, 0] = multiply(weight_biases[:, :, 0], input_nodes)
         node_input_sums = npSum(npSum(node_input_sums, 2), 1)
-        current_nodes = self.node_class(node_input_sums)
+        layer_activation = self.node_class(node_input_sums)
+        current_nodes = layer_activation.resultant
         return layer_index, current_nodes
-

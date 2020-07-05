@@ -4,11 +4,12 @@ from lib.core.activation.activation import ActivationFunction
 
 
 class ReluActivation(ActivationFunction):
-    ''' ReLU Activation-Function Method Class. '''
+    ''' ReLU Activation-Function Method Class. Rectified Linear Unit'''
+    # NOTE: ReLU is recommended for deep Neural Networks
 
     @staticmethod
     def getResultant(input_array):
-        ''' Get Results of ReLU Activation Function '''
+        ''' Get Results of ReLU Activation Function. '''
         val = input_array
         return Numpy_Divide(val + abs(val), 2)
 
