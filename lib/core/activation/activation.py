@@ -1,6 +1,3 @@
-from numpy import sum as arraySum
-
-
 class ActivationFunction():
     ''' Base Activation-Function Method Class. '''
 

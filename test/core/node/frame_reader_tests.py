@@ -21,9 +21,6 @@ class NNFrameTestSuite(unittest.TestCase):
 
     def test_01_sigmoid(self):
         num_hidden_layers = 4
-        NNTest = NumByDepthNN(num_hidden_layers, 4, node_type='SIGMOID')
+        nodes_per_hidden_layer = 4
+        NNTest = NumByDepthNN(num_hidden_layers, nodes_per_hidden_layer, node_type='SIGMOID')
         self.assertEqual(len(NNTest.base_frame.layers), num_hidden_layers+2)
-
-tester = NNFrameTestSuite()
-tester.test_00_base()
-tester.test_01_sigmoid()

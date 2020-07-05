@@ -50,7 +50,7 @@ class WeightBiasFrame():
         The second input, layer_title, may take layer_index as well.
         '''
         # TODO: Considering MultiThreading Method
-        layer_title = self.getLayerTitle(layer_title)
+        layer_title = self.base_frame.getLayerTitle(layer_index)
         self.layers[layer_title] = input_nodes
 
     def setWeightAndBiasValue(self, node_value, node_index, layer_index):

@@ -1,6 +1,4 @@
-from math import tanh
-from math import pow as power
-from numpy import subtract
+from numpy import subtract, tanh, power
 
 from lib.core.activation.activation import ActivationFunction
 

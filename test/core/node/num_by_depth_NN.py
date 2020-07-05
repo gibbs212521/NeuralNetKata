@@ -14,6 +14,5 @@ class NumByDepthNN(FrameReader):
     def define_frame(self):
         ''' Test Neural Network. '''
         # [self.addLayer(self.depth_of_hidden_layers, self.node_type) for layer in range(self.number_of_hidden_layers)]
-        print(self.number_of_hidden_layers)
         for layer in range(self.number_of_hidden_layers):
             self.addLayer(self.depth_of_hidden_layers, self.node_type)

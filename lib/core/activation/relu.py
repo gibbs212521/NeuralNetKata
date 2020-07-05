@@ -1,4 +1,5 @@
 from numpy import divide as Numpy_Divide
+from numpy import abs
 
 from lib.core.activation.activation import ActivationFunction
 
@@ -14,5 +15,5 @@ class ReluActivation(ActivationFunction):
         return Numpy_Divide(val + abs(val), 2)
 
     def getDerivative(self):
-        val = self.input_sum
+        val = self.resultant
         return Numpy_Divide(val + abs(val), (2*abs(val)))
