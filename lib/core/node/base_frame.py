@@ -14,6 +14,9 @@ class BaseFrame():
         self.layers = OrderedDict()
         self.layers['INPUT'] = inputs
         self.layers['OUTPUT'] = outputs
+        self.layers_delta = OrderedDict()
+        self.layers_delta['INPUT'] = inputs
+        self.layers_delta['OUTPUT'] = outputs
         self.layer_types = OrderedDict()
         self.layer_types['INPUT'] = 'INPUT'
         self.layer_types['OUTPUT'] = 'SIMPLE_SUM'
@@ -175,3 +178,8 @@ class BaseFrame():
         ''' Change Value of Node in given Layer. '''
         layer_title = self.getLayerTitle(layer_title)
         self.layers[layer_title][node_index] = node_value
+
+    def setDerivatives(self, layer_title, delta_nodes, learning_rate=1):
+        ''' Set Node Derivatives for specified layer. '''
+        layer_title = self.getLayerTitle(layer_title)
+        self.layers_delta[layer_title] = delta_nodes * learning_rate

@@ -1,6 +1,6 @@
 from numpy import divide as Numpy_Divide
 from numpy import multiply as Numpy_Multiply
-from numpy import abs
+from numpy import abs, ones
 
 from lib.core.activation.activation import ActivationFunction
 
@@ -16,4 +16,5 @@ class LeakyReluActivation(ActivationFunction):
 
     def getDerivative(self):
         val = self.resultant
-        return Numpy_Divide(abs(val) + val, (2*abs(val))) + Numpy_Multiply(Numpy_Divide(abs(val) - val, (2*abs(val))), self.negative_ratio)
+        self.derivatives = Numpy_Divide(abs(val) + val, (2*abs(val))) + Numpy_Multiply(Numpy_Divide(abs(val) - val, (2*abs(val))), self.negative_ratio)
+        return self.derivatives

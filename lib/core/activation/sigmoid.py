@@ -1,4 +1,4 @@
-from numpy import exp
+from numpy import exp, ones
 from numpy import divide as Numpy_Divide
 from numpy import multiply as Numpy_Multiply
 
@@ -16,4 +16,5 @@ class SigmoidActivation(ActivationFunction):
 
     def getDerivative(self):
         resultant = self.resultant
-        return Numpy_Multiply(resultant, (1-resultant))
+        self.derivatives = Numpy_Multiply(resultant, (1-resultant))
+        return self.derivatives

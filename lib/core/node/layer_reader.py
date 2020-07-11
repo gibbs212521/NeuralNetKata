@@ -25,12 +25,13 @@ class LayerReader():
     node_dictionary['LEAKY_RELU'] = LeakyReluActivation
     node_class = None
 
-    def __init__(self, base_frame, weight_bias_frame, layer_title=None):
+    def __init__(self, base_frame, weight_bias_frame, layer_title=None, learning_rate=0.005):
+        self.learning_rate = learning_rate
         layer_index, current_nodes = self.calculateLayerForwardPropagation(base_frame,\
             weight_bias_frame, layer_title)
         base_frame.setLayerNodeValues(current_nodes, layer_index)
 
-    def resetNodeClass(self, node_type):
+    def setNodeClass(self, node_type):
         ''' Sets Node Type for Layer being read. '''
         node_type = node_type.upper()
         self.node_class = self.node_dictionary[node_type]
@@ -40,13 +41,18 @@ class LayerReader():
         # TODO: MultiThread Following Section:
         layer_title = base_frame.getLayerTitle(layer_title)
         layer_index, input_nodes, current_nodes, layer_type = base_frame.selectLayer(layer_title)
-        self.resetNodeClass(layer_type)
+        self.setNodeClass(layer_type)
         weight_biases = weight_bias_frame.getLayerWeightsAndBiases(layer_index)
         if layer_type == 'INPUT':
             return layer_index, current_nodes
-        node_input_sums = deepcopy(weight_biases)
-        node_input_sums[:, :, 0] = multiply(weight_biases[:, :, 0], input_nodes)
-        node_input_sums = npSum(npSum(node_input_sums, 2), 1)
+        node_inputs = deepcopy(weight_biases)
+        node_inputs[:, :, 0] = multiply(weight_biases[:, :, 0], input_nodes)
+        node_input_sums = npSum(npSum(node_inputs, 2), 1)
         layer_activation = self.node_class(node_input_sums)
         current_nodes = layer_activation.resultant
+        delta_nodes = layer_activation.getDerivative()
+        base_frame.setDerivatives(layer_title, delta_nodes, self.learning_rate))
+        delta_weights = layer_activation.getWeightDerivative(weight_biases[:, :, 0])
+        delta_biases = layer_activation.getBiasDerivative(weight_biases[:, :, 1])
+        weight_bias_frame.setDerivatives(layer_index, delta_weights, delta_biases, self.learning_rate)
         return layer_index, current_nodes

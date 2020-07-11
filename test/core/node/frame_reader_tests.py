@@ -2,6 +2,7 @@ import unittest
 
 from lib.core.node.frame_reader import FrameReader
 from test.core.node.num_by_depth_NN import NumByDepthNN
+from test.core.node.two_number_sum_NN import TwoNumberSumNN
 
 class NNFrameTestSuite(unittest.TestCase):
 
@@ -24,3 +25,22 @@ class NNFrameTestSuite(unittest.TestCase):
         nodes_per_hidden_layer = 4
         NNTest = NumByDepthNN(num_hidden_layers, nodes_per_hidden_layer, node_type='SIGMOID')
         self.assertEqual(len(NNTest.base_frame.layers), num_hidden_layers+2)
+
+    def test_02_two_number_sum(self):
+        ''' Elementary Neural Network Test. '''
+        number_one = 1
+        number_two = 2
+        desired_number = number_one + number_two
+        NNTest = TwoNumberSumNN(number_one, number_two)
+        initial_output = NNTest.base_frame.layers['OUTPUT']
+        # print(desired_number - initial_output)
+        # print(NNTest.base_frame.layers)
+        # print(NNTest.base_frame.layers_delta)
+        print(NNTest.weight_base_frame.layers)
+        print(NNTest.weight_base_frame.delta_weights)
+        # print(NNTest.weight_base_frame.delta_biases)
+
+
+tester = NNFrameTestSuite()
+# tester.test_01_sigmoid()
+tester.test_02_two_number_sum()

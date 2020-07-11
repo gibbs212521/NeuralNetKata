@@ -1,5 +1,6 @@
 from numpy import divide as Numpy_Divide
-from numpy import abs
+from numpy import multiply as Numpy_Multiply
+from numpy import abs, ones
 
 from lib.core.activation.activation import ActivationFunction
 
@@ -16,4 +17,5 @@ class ReluActivation(ActivationFunction):
 
     def getDerivative(self):
         val = self.resultant
-        return Numpy_Divide(val + abs(val), (2*abs(val)))
+        self.derivatives = Numpy_Divide(val + abs(val), (2*abs(val)))
+        return self.derivatives

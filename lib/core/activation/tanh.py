@@ -1,4 +1,5 @@
-from numpy import subtract, tanh, power
+from numpy import subtract, tanh, power, ones,\
+    multiply as Numpy_Multiply
 
 from lib.core.activation.activation import ActivationFunction
 
@@ -14,4 +15,5 @@ class TanhActivation(ActivationFunction):
 
     def getDerivative(self):
         resultant = self.resultant
-        return subtract(1, power(resultant, 2))
+        self.derivatives = subtract(1, power(resultant, 2))
+        return self.derivatives
