@@ -66,6 +66,5 @@ class WeightBiasFrame():
 
     def setDerivatives(self, layer_index, delta_weights, delta_biases, learning_rate=1):
         ''' Set Derivatives of Weights and Biases for specified layer. '''
-        print(layer_index)
         self.delta_weights[layer_index-1] = delta_weights * learning_rate
         self.delta_biases[layer_index-1] = delta_biases * learning_rate

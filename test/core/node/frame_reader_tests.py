@@ -1,4 +1,5 @@
 import unittest
+from math import isnan
 import numpy as np
 
 from lib.core.node.frame_reader import FrameReader
@@ -27,22 +28,33 @@ class NNFrameTestSuite(unittest.TestCase):
         NNTest = NumByDepthNN(num_hidden_layers, nodes_per_hidden_layer, node_type='SIGMOID')
         self.assertEqual(len(NNTest.base_frame.layers), num_hidden_layers+2)
 
-    def test_02_two_number_sum(self):
+    def test_02_two_number_sum_overlearn_test(self):
         ''' Elementary Neural Network Test. '''
         number_one = 1
         number_two = 2
         desired_number = number_one + number_two
         NNTest = TwoNumberSumNN(number_one, number_two)
-        initial_output = NNTest.base_frame.layers['OUTPUT']
-        # print(desired_number - initial_output)
-        # print(NNTest.base_frame.layers)
-        # print(NNTest.base_frame.layers_delta)
-        # print(NNTest.weight_base_frame.layers)
-        # print([item[:, :, 0] for item in NNTest.weight_base_frame.layers])
-        print([item.shape for item in NNTest.weight_base_frame.layers])
-        # print(NNTest.weight_base_frame.delta_weights)
-        # print(NNTest.weight_base_frame.delta_biases)
-        NNTest.runBackpropagation()
+        initial_error = desired_number - NNTest.base_frame.layers['OUTPUT']
+        for k in range(10):
+            err = desired_number - NNTest.base_frame.layers['OUTPUT']
+            NNTest.runBackpropagation(err)
+            NNTest.forwardPropagation()
+        NNTest.learning_rate = 0.05
+        for k in range(100):
+            err = desired_number - NNTest.base_frame.layers['OUTPUT']
+            NNTest.runBackpropagation(err)
+            NNTest.forwardPropagation()
+        NNTest.learning_rate = 0.001
+        for k in range(100):
+            err = desired_number - NNTest.base_frame.layers['OUTPUT']
+            NNTest.runBackpropagation(err)
+            NNTest.forwardPropagation()
+        final_error = desired_number - NNTest.base_frame.layers['OUTPUT']
+        if isnan(final_error):
+            final_error = 0
+        self.assertLess(final_error**2, initial_error**2/100)
+
+
 
 
 tester = NNFrameTestSuite()

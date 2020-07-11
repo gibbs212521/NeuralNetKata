@@ -111,24 +111,15 @@ class FrameReader():
             for layer_shape_indx in range(layer_shape[1]):
                 self.weight_base_frame.delta_weights[layer_index][:, layer_shape_indx] = multiply(delta_weights[:, layer_shape_indx], delta_nodes)
                 self.weight_base_frame.delta_biases[layer_index][:, layer_shape_indx] = multiply(delta_biases[:, layer_shape_indx], delta_nodes)
-            # print([(delta_biases[:, k]) for k in range(layer_shape[1])])
-            # print([(delta_weights[:, k]) for k in range(layer_shape[1])])
-            self.weight_base_frame.delta_biases[layer_index] = array([multiply(delta_biases[:, k], delta_nodes) for k in range(layer_shape[1])])
         weight_difference = multiply(array(self.weight_base_frame.delta_weights, dtype='object'), -net_output_error)
         bias_difference = multiply(array(self.weight_base_frame.delta_biases, dtype='object'), -net_output_error)
-
-        # print([item[:, :, 0] for item in self.weight_base_frame.layers])
-        # print(self.weight_base_frame.layers)
-        # print(self.weight_base_frame.delta_weights)
-        testee = array([item[:, :, 0] for item in self.weight_base_frame.layers], dtype='object')
-        print(subtract(testee, weight_difference), '\n\n')
         # Brute forcing for time's sake *** NOT EFFICIENT
-        for layer in self.weight_base_frame.layers:
-            for nodes in layer:
-                for node in nodes:
-                    weights = node[0]
-                    biases = node[1]
-                    print(weights)
-        # print(self.weight_base_frame.delta_biases)
-        # # print(array([item[:, :, 0] for item in self.weight_base_frame.layers], dtype='object') - weight_difference)
-        # print(array([item[:, :, 1] for item in self.weight_base_frame.layers], dtype='object') - bias_difference)
+        dweights = array([item[:, :, 0] for item in self.weight_base_frame.layers], dtype='object')
+        dweights = subtract(dweights, weight_difference)
+        dbiases = array([item[:, :, 1] for item in self.weight_base_frame.layers], dtype='object')
+        dbiases = subtract(dweights, bias_difference)
+        for array_number, layer in enumerate(self.weight_base_frame.layers):
+            for layer_number, nodes in enumerate(layer):
+                for node_number in range(len(nodes)):
+                    self.weight_base_frame.layers[array_number][layer_number][node_number][0] = dweights[array_number][layer_number][node_number]
+                    self.weight_base_frame.layers[array_number][layer_number][node_number][1] = dbiases[array_number][layer_number][node_number]
