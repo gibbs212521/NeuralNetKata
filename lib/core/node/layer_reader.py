@@ -51,7 +51,7 @@ class LayerReader():
         layer_activation = self.node_class(node_input_sums)
         current_nodes = layer_activation.resultant
         delta_nodes = layer_activation.getDerivative()
-        base_frame.setDerivatives(layer_title, delta_nodes, self.learning_rate))
+        base_frame.setDerivatives(layer_title, delta_nodes, self.learning_rate)
         delta_weights = layer_activation.getWeightDerivative(weight_biases[:, :, 0])
         delta_biases = layer_activation.getBiasDerivative(weight_biases[:, :, 1])
         weight_bias_frame.setDerivatives(layer_index, delta_weights, delta_biases, self.learning_rate)

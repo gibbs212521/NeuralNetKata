@@ -1,5 +1,4 @@
-from numpy import ones, ndarray, sum as npSum
-from numpy import multiply as Numpy_Multiply
+from numpy import ones, array, ndarray, sum as npSum
 
 from lib.core.activation.activation import ActivationFunction
 
@@ -23,15 +22,10 @@ class SumActivation(ActivationFunction):
     def getWeightDerivative(self, input_array=None):
         ''' Not True Derivative. Simplified for expedience. '''
         if input_array is None:
-            shape = self.inputs_depth
+            input_array = self.inputs_depth
         elif isinstance(input_array, list):
-            shape = len(input_array)
-        elif isinstance(input_array, ndarray):
-            shape = input_array.shape
-        resultant_array = ones(shape)
-        for indx in range(shape[1]):
-            resultant_array[:, indx] = self.resultant
-        return Numpy_Multiply(resultant_array, ones(shape))
+            input_array = array(input_array)
+        return input_array
 
     def getBiasDerivative(self, input_array=None):
         ''' Not True Derivative. Simplified for expedience. '''
@@ -41,7 +35,4 @@ class SumActivation(ActivationFunction):
             shape = len(input_array)
         elif isinstance(input_array, ndarray):
             shape = input_array.shape
-        resultant_array = ones(shape)
-        for indx in range(shape[1]):
-            resultant_array[:, indx] = self.resultant
-        return Numpy_Multiply(resultant_array, ones(shape))
+        return ones(shape)

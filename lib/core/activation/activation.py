@@ -29,7 +29,6 @@ class ActivationFunction():
             input_array = self.input_array
         shape = input_array.shape
         derivative_array = ones(shape)
-        # print(shape,derivative_array)
         for indx in range(shape[1]):
             derivative_array[:, indx] = self.derivatives
         return Numpy_Multiply(derivative_array, input_array)
@@ -42,4 +41,4 @@ class ActivationFunction():
         derivative_array = ones(shape)
         for indx in range(shape[1]):
             derivative_array[:, indx] = self.derivatives
-        return Numpy_Multiply(derivative_array, ones(shape))
+        return derivative_array

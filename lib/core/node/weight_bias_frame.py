@@ -1,5 +1,5 @@
 from numpy.random import random
-from numpy import multiply, divide, subtract, ones
+from numpy import multiply, divide, subtract, ones, array
 
 
 class WeightBiasFrame():

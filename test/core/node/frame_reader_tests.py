@@ -1,4 +1,5 @@
 import unittest
+import numpy as np
 
 from lib.core.node.frame_reader import FrameReader
 from test.core.node.num_by_depth_NN import NumByDepthNN
@@ -36,9 +37,12 @@ class NNFrameTestSuite(unittest.TestCase):
         # print(desired_number - initial_output)
         # print(NNTest.base_frame.layers)
         # print(NNTest.base_frame.layers_delta)
-        print(NNTest.weight_base_frame.layers)
-        print(NNTest.weight_base_frame.delta_weights)
+        # print(NNTest.weight_base_frame.layers)
+        # print([item[:, :, 0] for item in NNTest.weight_base_frame.layers])
+        print([item.shape for item in NNTest.weight_base_frame.layers])
+        # print(NNTest.weight_base_frame.delta_weights)
         # print(NNTest.weight_base_frame.delta_biases)
+        NNTest.runBackpropagation()
 
 
 tester = NNFrameTestSuite()

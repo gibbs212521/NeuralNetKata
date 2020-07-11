@@ -1,4 +1,4 @@
-from numpy import array, ndarray
+from numpy import array, subtract, multiply, ndarray, sum as npSum
 
 from lib.core.node.layer_reader import LayerReader
 from lib.core.node.base_frame import BaseFrame
@@ -17,7 +17,7 @@ class FrameReader():
     weight_bias_frame_class = WeightBiasFrame
     layer_reader_class = LayerReader
     output_type = 'SIMPLE_SUM'
-    learning_rate = 0.005
+    learning_rate = 0.1
 
     def __init__(self):
 
@@ -89,3 +89,46 @@ class FrameReader():
             if indx == 0:
                 continue
             self.layer_reader_class(self.base_frame, self.weight_base_frame, indx, self.learning_rate)
+
+    def runBackpropagation(self, net_output_error=1):
+        ''' Backpropagate values from base_frame and weight_bias_frame. '''
+        shapes = [layer.shape for layer in self.weight_base_frame.layers]
+        shapes.reverse()
+        for indx in range(len(shapes)):
+            layer_index = -(indx + 1)
+            delta_biases = self.weight_base_frame.delta_biases[layer_index]
+            delta_weights = self.weight_base_frame.delta_weights[layer_index]
+            base_layer_index = self.base_frame.getLayerTitle(layer_index)
+            # Derivatives compound due to Calculus Chain Rule as one moves towards inputs
+            recursion_indx = layer_index + 1
+            if recursion_indx is 0:
+                continue
+            node_count = len(self.base_frame.layers_delta[base_layer_index])
+            layer_shape = delta_biases.shape
+            recursive_delta_weights = self.weight_base_frame.delta_weights[recursion_indx]
+            self.base_frame.layers_delta[base_layer_index] = [npSum(recursive_delta_weights[:, k]) for k in range(node_count)]
+            delta_nodes = self.base_frame.layers_delta[base_layer_index]
+            for layer_shape_indx in range(layer_shape[1]):
+                self.weight_base_frame.delta_weights[layer_index][:, layer_shape_indx] = multiply(delta_weights[:, layer_shape_indx], delta_nodes)
+                self.weight_base_frame.delta_biases[layer_index][:, layer_shape_indx] = multiply(delta_biases[:, layer_shape_indx], delta_nodes)
+            # print([(delta_biases[:, k]) for k in range(layer_shape[1])])
+            # print([(delta_weights[:, k]) for k in range(layer_shape[1])])
+            self.weight_base_frame.delta_biases[layer_index] = array([multiply(delta_biases[:, k], delta_nodes) for k in range(layer_shape[1])])
+        weight_difference = multiply(array(self.weight_base_frame.delta_weights, dtype='object'), -net_output_error)
+        bias_difference = multiply(array(self.weight_base_frame.delta_biases, dtype='object'), -net_output_error)
+
+        # print([item[:, :, 0] for item in self.weight_base_frame.layers])
+        # print(self.weight_base_frame.layers)
+        # print(self.weight_base_frame.delta_weights)
+        testee = array([item[:, :, 0] for item in self.weight_base_frame.layers], dtype='object')
+        print(subtract(testee, weight_difference), '\n\n')
+        # Brute forcing for time's sake *** NOT EFFICIENT
+        for layer in self.weight_base_frame.layers:
+            for nodes in layer:
+                for node in nodes:
+                    weights = node[0]
+                    biases = node[1]
+                    print(weights)
+        # print(self.weight_base_frame.delta_biases)
+        # # print(array([item[:, :, 0] for item in self.weight_base_frame.layers], dtype='object') - weight_difference)
+        # print(array([item[:, :, 1] for item in self.weight_base_frame.layers], dtype='object') - bias_difference)

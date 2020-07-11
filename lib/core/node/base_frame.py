@@ -111,11 +111,13 @@ class BaseFrame():
 
     def getLayerTitle(self, layer_title):
         ''' Repeating method to retrieve layer index & title. '''
-        if layer_title is None:
+        max_index = len(self.frame) - 1
+        if isinstance(layer_title, int) and layer_title < 0:
+            layer_title = max_index + layer_title + 1
+        elif layer_title is None:
             layer_title = self.current_layer
         layer_title = str(layer_title)
         layer_title = layer_title.upper()
-        max_index = len(self.frame) - 1
 
         if layer_title == 'INPUT' or layer_title == '0':
             self.current_layer = 'INPUT'
