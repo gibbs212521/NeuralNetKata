@@ -130,6 +130,3 @@ class ActivationFunctionTestSuite(unittest.TestCase):
         if 'float64' not in str(type(method_test.getDerivative()[0])):
             self.fail('Float Value Not Received.')
         self.assertTrue(all(test_value == expected_value))
-
-tester = ActivationFunctionTestSuite()
-tester.test_05_sigmoid_vector()

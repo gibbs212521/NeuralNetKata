@@ -5,6 +5,7 @@ from numpy.random import random
 
 from test.core.neural_network.two_number_sum_NN import TwoNumberSumNN
 from test.core.neural_network.unity_NN import UnityOutputNN
+from test.core.neural_network.exp_NN import ExponentNN
 
 class NeuralNetworkTestSuite(unittest.TestCase):
 
@@ -85,7 +86,26 @@ class NeuralNetworkTestSuite(unittest.TestCase):
                 err = 0
             self.assertLess(err**2, avg_initial_variance/10000)
 
-tester = NeuralNetworkTestSuite()
-# tester.test_00_two_number_sum_overlearn_test()
-# tester.test_01_two_number_sum_fitness_test()
-# tester.test_02_unity_NN_test()
+    def test_03_exponential_test(self):
+        inputs = multiply(random(20)-0.5, 150) // 1
+        base_number = 13
+        power_number = 6
+        desired_number = base_number**power_number
+        NNTest = ExponentNN(base_number, power_number, node_type='RELU')
+        initial_error = desired_number - NNTest.base_frame.layers['OUTPUT']
+        NNTest.trainFIRNeuralNetwork(inputs, 2, learning_rate=0.5)
+        NNTest.trainFIRNeuralNetwork(inputs, 10, learning_rate=0.1)
+        final_error = desired_number - NNTest.base_frame.layers['OUTPUT']
+        if isnan(final_error):
+            final_error = 0
+        self.assertLess(final_error**2, initial_error**2/10000)
+        # Demonstrate overfitting by handling value outside of scope.
+        base_number = -1537
+        power_number = -13
+        desired_number = base_number**power_number
+        NNTest.setInput(base_number, power_number)
+        NNTest.forwardPropagation()
+        final_error = desired_number - NNTest.base_frame.layers['OUTPUT']
+        if isnan(final_error):
+            final_error = 0
+        self.assertLess(final_error**2, initial_error**2/10000)
