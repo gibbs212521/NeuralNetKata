@@ -1,7 +1,7 @@
-from lib.core.node.frame_reader import FrameReader
+from lib.core.neural_network.neural_network import NeuralNetwork
 
 
-class NumByDepthNN(FrameReader):
+class NumByDepthNN(NeuralNetwork):
 
     ''' Neural Network Framing Test for testing purposes. '''
 

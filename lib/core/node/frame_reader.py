@@ -89,6 +89,7 @@ class FrameReader():
             if indx == 0:
                 continue
             self.layer_reader_class(self.base_frame, self.weight_base_frame, indx, self.learning_rate)
+        self.calculateError()
 
     def runBackpropagation(self, net_output_error=1):
         ''' Backpropagate values from base_frame and weight_bias_frame. '''
