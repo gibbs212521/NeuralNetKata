@@ -1,7 +1,10 @@
 import unittest
 from math import isnan
+from numpy import average, square, multiply
+from numpy.random import random
 
 from test.core.neural_network.two_number_sum_NN import TwoNumberSumNN
+from test.core.neural_network.unity_NN import UnityOutputNN
 
 class NeuralNetworkTestSuite(unittest.TestCase):
 
@@ -59,9 +62,30 @@ class NeuralNetworkTestSuite(unittest.TestCase):
         print(final_error)
         self.assertLess(final_error**2, initial_error**2/10000)
 
-    def test_03_unity_NN_test(self):
-        pass
+    def test_02_unity_NN_test(self):
+        inputs = multiply(random(1000)-0.5, 100000)
+        NNTest = UnityOutputNN(inputs, node_type='RELU')
+        avg_initial_variance = average(square(inputs - NNTest.base_frame.layers['OUTPUT']))
+        NNTest.trainNN(10)
+        NNTest.trainNN(10, learning_rate=0.05)
+        final_error = inputs - NNTest.base_frame.layers['OUTPUT']
+        for indx, err in enumerate(final_error):
+            if isnan(err):
+                final_error[indx] = 0
+                err = 0
+            self.assertLess(err**2, avg_initial_variance/10000)
+        # Demonstrate overfitting by handling value outside of scope.
+        inputs = multiply(random(1000)-0.75, 100000000)
+        NNTest.setInput(inputs)
+        NNTest.forwardPropagation()
+        final_error = inputs - NNTest.base_frame.layers['OUTPUT']
+        for indx, err in enumerate(final_error):
+            if isnan(err):
+                final_error[indx] = 0
+                err = 0
+            self.assertLess(err**2, avg_initial_variance/10000)
 
-# tester = NeuralNetworkTestSuite()
+tester = NeuralNetworkTestSuite()
 # tester.test_00_two_number_sum_overlearn_test()
 # tester.test_01_two_number_sum_fitness_test()
+# tester.test_02_unity_NN_test()

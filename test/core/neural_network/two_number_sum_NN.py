@@ -23,13 +23,20 @@ class TwoNumberSumNN(NeuralNetwork):
         self.setInput(self.number_one, self.number_two)
         self.setOutputDepth(1)
 
-    def forwardPropagation(self):
-        super().forwardPropagation()
-
     def setInput(self, number_one, number_two):
         self.number_one = number_one
         self.number_two = number_two
         super().setInput([number_one, number_two])
+
+    def generalForwardPropagation(self, inputs):
+        total_inputs = len(inputs)**2
+        general_error = 0
+        for number_one in inputs:
+            for number_two in inputs:
+                self.setInput(number_one, number_two)
+                self.forwardPropagation()
+                general_error += self.error / total_inputs
+        self.error = general_error
 
     def runBackpropagation(self):
         super().runBackpropagation(self.error)

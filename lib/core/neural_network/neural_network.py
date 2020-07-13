@@ -21,16 +21,15 @@ class NeuralNetwork(FrameReader):
             self.runBackpropagation()
 
     def generalForwardPropagation(self, inputs):
-        total_inputs = len(inputs)**2
+        ''' General FIR Forward Propagation calculating overall error. '''
+        total_inputs = len(inputs)
         general_error = 0
-        for number_one in inputs:
-            for number_two in inputs:
-                self.setInput(number_one, number_two)
-                self.forwardPropagation()
-                general_error += self.error / total_inputs
+        for input_value in inputs:
+            self.setInput(input_value)
+            self.forwardPropagation()
+            general_error += self.error / total_inputs
         self.error = general_error
 
     def calculateError(self):
         ''' Neural Network Specific Cost Function '''
         raise NotImplementedError('calculateError Function is Neural Network Specific.')
-

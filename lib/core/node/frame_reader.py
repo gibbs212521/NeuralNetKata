@@ -1,4 +1,5 @@
-from numpy import array, subtract, multiply, ndarray, sum as npSum
+from numpy import array, subtract, multiply, ndarray, average,\
+    sum as npSum
 
 from lib.core.node.layer_reader import LayerReader
 from lib.core.node.base_frame import BaseFrame
@@ -93,6 +94,8 @@ class FrameReader():
 
     def runBackpropagation(self, net_output_error=1):
         ''' Backpropagate values from base_frame and weight_bias_frame. '''
+        if isinstance(net_output_error, list) or isinstance(net_output_error, ndarray):
+            net_output_error = average(net_output_error)
         shapes = [layer.shape for layer in self.weight_base_frame.layers]
         shapes.reverse()
         for indx in range(len(shapes)):

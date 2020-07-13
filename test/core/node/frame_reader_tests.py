@@ -1,6 +1,8 @@
 import unittest
 
 from lib.core.node.frame_reader import FrameReader
+from test.core.neural_network.num_by_depth_NN import NumByDepthNN
+
 class NNFrameTestSuite(unittest.TestCase):
 
     ''' Unit Tests for Activation Functions '''
